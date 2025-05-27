@@ -1,0 +1,28 @@
+# Raspberry PI OS first boot config toml
+# reference: https://github.com/RPi-Distro/raspberrypi-sys-mods/blob/master/usr/lib/raspberrypi-sys-mods/
+
+# Required:
+config_version = 1
+
+[system]
+hostname = "lzer0"
+
+[user]
+# If present, the default "rpi" user gets renamed to this "name"
+name = "lzer0"
+# openssl passwd -5 $cleartext
+password = "$5$kBM2.h.qk/3OVWqo$QGfx/dir.NGmtmE4D10RW/j0r0x2Wq27i6YT2Liqnm9"
+password_encrypted = true
+
+[ssh]
+enabled = true
+password_authentication = false
+authorized_keys = [ "ssh-ed25519 AAA ... /wymcrm your@example.com" ]
+
+[wlan]
+# no country => rfkill is triggered
+country = ""
+
+[locale]
+keymap = "it"
+timezone = "Etc/UTC"

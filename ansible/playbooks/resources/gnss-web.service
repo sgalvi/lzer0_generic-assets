@@ -1,0 +1,15 @@
+[Unit]
+Description=GNSS Web UI
+After=syslog.target
+
+[Service]
+User=lzer0
+WorkingDirectory=/home/lzer0/gnss-web
+ExecStart=/home/lzer0/gnss-web/gnss-api
+Restart=on-failure
+RestartSec=5s
+Type=idle
+
+[Install]
+WantedBy=multi-user.target
+

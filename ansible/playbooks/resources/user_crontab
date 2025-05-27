@@ -1,0 +1,71 @@
+#
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+#
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').
+#
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+#
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+#
+#  _                     _____ 
+# | |                   / __  \
+# | |    ____  ___ _ __| | / / |
+# | |   |_  / / _ \ '__| |/ /| |
+# | |___ / / |  __/ |  | ' /_| |
+# |_____/___| \___|_|   \_____/
+#
+# * * * * *
+# - - - - -
+# | | | | |
+# | | | | +----- day of week (0-6) (Sunday=0)
+# | | | +------- month (1 - 12)
+# | | +-------- day of month (1 - 31)
+# | +--------- hour (0 - 23)
+# +---------- min (0 - 59)
+#
+# Impostazioni generali per il PATH
+PATH=/home/lzer0/bin:/usr/local/bin:/usr/bin:/bin
+
+### Monitoraggio della temperatura e utilizzo CPU
+* * * * * /home/lzer0/bin/lzer0.log.temp >/dev/null 2>&1
+
+### Reindirizzamento stream U-Blox su porte TCP (avvio al reboot)
+@reboot sleep 30; /home/lzer0/bin/lzer0.ser2tcp.ubx >/dev/null 2>&1
+
+### Controllo e reset della connessione RTK (avvio al reboot)
+@reboot sleep 60; nohup python3 /home/lzer0/bin/lzer0.reset.rtklib.py >&1
+
+### Gestione data/ora (utilizza messaggi NMEA da porte TCP U-Blox)
+* * * * * /home/lzer0/bin/lzer0.get.datetime >/dev/null 2>&1
+#@reboot sleep 60; /home/lzer0/bin/lzer0.set.datetime >/dev/null 2>&1
+
+### Gestione storage USB
+@reboot sleep 80; /home/lzer0/bin/lzer0.mount.storage >/dev/null 2>&1
+@reboot sleep 100; /home/lzer0/bin/lzer0.check.storage >/dev/null 2>&1
+### Verifica spazio libero ogni ora
+1 * * * * /home/lzer0/bin/lzer0.check.storage >/dev/null 2>&1
+
+### Reindirizzamento dei dati su file (avvio al reboot)
+@reboot sleep 120; /home/lzer0/bin/lzer0.tcp2file.ubx -f /home/lzer0/cfg/sites.cfg >/dev/null 2>&1
+
+### Gestione porta seriale
+*/10 * * * * /home/lzer0/bin/lzer0.manage.serialport check
+
+### Gestione dei dataset GNSS
+0 * * * * sleep 5; /home/lzer0/bin/lzer0.compress.hourlygnss -f /home/lzer0/cfg/sites.cfg >/dev/null 2>&1
+30 */6 * * * /home/lzer0/bin/lzer0.compress.hourlygnss -f /home/lzer0/cfg/sites.cfg -p 96 >/dev/null 2>&1
+
+### Elaborazione in tempo reale dei dati GNSS
+@reboot sleep 45; /home/lzer0/bin/lzer0.start.rtk -f /home/lzer0/cfg/rtkrcv.curr.conf >/dev/null 2>&1
+* * * * * /home/lzer0/bin/lzer0.check.rtk -f /home/lzer0/cfg/rtkrcv.curr.conf >/dev/null 2>&1
+
+### Registrazione in tempo reale delle posizioni GNSS
+@reboot sleep 50; /home/lzer0/bin/lzer0.record.hourlypos -f /home/lzer0/cfg/sites.cfg >/dev/null 2>&1
+@reboot sleep 55; /home/lzer0/bin/lzer0.check.recordhourlypos -f /home/lzer0/cfg/sites.cfg >/dev/null 2>&1 
+1 * * * * /home/lzer0/bin/lzer0.check.recordhourlypos -f /home/lzer0/cfg/sites.cfg >/dev/null 2>&1
