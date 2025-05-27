@@ -1,10 +1,7 @@
 # Resource Customization Guide
 
----
 
 This repository contains generic configurations and scripts designed to be **personalized and integrated into your project**. Follow the steps below to adapt them to your needs.
-
----
 
 ## 🔒 UFW Rules (Uncomplicated Firewall)
 
@@ -26,8 +23,6 @@ UFW configurations are located in `ansible/playbooks/resources/ufw/`. I recommen
     ```
 
 Ensure these rules reflect the ports and services you intend to expose on your system.
-
----
 
 ## 🔑 SSH Keys for Ansible
 
