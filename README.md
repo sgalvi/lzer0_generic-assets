@@ -3,6 +3,8 @@
 
 This repository contains generic configurations and scripts designed to be **personalized and integrated into your project**. Follow the steps below to adapt them to your needs.
 
+---
+
 ## 🔒 UFW Rules (Uncomplicated Firewall)
 
 UFW configurations are located in `ansible/playbooks/resources/ufw/`. I recommend reviewing and customizing the following files:
@@ -38,7 +40,6 @@ ssh-keygen -t ed25519 -C "your_comment_or_email"
 
 This will create two files: `id_ed25519` (private key) and `id_ed25519.pub` (public key). Keep your private key **secure** and do not share it.
 
----
 
 ## ⚙️ `custom.toml` File Configuration
 
